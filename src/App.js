@@ -25,8 +25,18 @@ class App extends Component {
     xhr({
       url: url
     }, (err, data) => {
+
+      var body = JSON.parse(data.body)
+      var list = body.list;
+      var dates = [];
+      var temps = [];
+      for (var i = 0; i < list.length; i++) {
+        dates.push(list[i].dt_txt);
+        temps.push(list[i].main.temp);
+      }
+
       self.setState({
-        data: JSON.parse(data.body)
+        data: body
       });
     });
   };

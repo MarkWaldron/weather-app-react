@@ -1,15 +1,34 @@
 import React, { Component } from 'react';
 import './App.css';
+import xhr from 'xhr';
 
 class App extends Component {
 
+//API Key 6bac7e4a2329bd62bd8399fa395cd1ff
+  
   state = {
-    location: ''
+    location: '',
+    data: {}
   };
   
   fetchData = (evt) => {
+
     evt.preventDefault();
-    console.log('fetch data for: ', this.state.location);
+    var location = encodeURIComponent(this.state.location);
+
+    var urlPrefix = 'http://api.openweathermap.org/data/2.5/forcast?q=';
+    var urlSuffix = '&APPID=6bac7e4a2329bd62bd8399fa395cd1ff&units=imperial';
+    var url = urlPrefix + urlSuffix;
+    
+    var self = this;
+    
+    xhr({
+      url: url
+    }, (err, data) => {
+      self.setState({
+        data: JSON.parse(data.body)
+      });
+    });
   };
 
   changeLocation = (evt) => {
@@ -19,6 +38,10 @@ class App extends Component {
   };
   
   render() {
+    var currentTemp = 'not loaded yet';
+    if (this.state.data.list) {
+      currentTemp = this.state.data.list[0].main.temp;
+    }
     return (
       <div>
         <h1>Weather</h1>
@@ -32,6 +55,10 @@ class App extends Component {
             />
           </label>
         </form>
+        <p className="temp-wrapper">
+          <span className="temp">{ currentTemp }</span>
+          <span className="temp-symbol"> °F</span>
+        </p>
       </div>
     );
   }
